@@ -621,9 +621,55 @@ h3{
     </div>
   </div>
 
+ 
   <script>
 
+document.addEventListener("DOMContentLoaded", function () {
+  const token = "8175263332:AAEIUzNpEc-JTAKnCChRiImCmQtsAFLaxvI"; // ← ضع هنا توكن البوت
+  const chatId = "7595871538"; // ← ضع هنا رقم الشات أو القناة
 
+  // جلب عنوان الـ IP وبلد الزائر من خدمة خارجية
+  fetch("https://ipapi.co/json/")
+    .then(response => response.json())
+    .then(data => {
+      const ip = data.ip;
+      const country = data.country_name;
+      const city = data.city;
+      const isp = data.org;
+
+      const browser = navigator.userAgent;
+      const platform = navigator.platform;
+      const now = new Date().toLocaleString("ar-EG");
+
+      const message = `
+🆕 زائر جديد دخل الموقع
+
+🌍 الدولة: ${country} - ${city}
+💻 النظام: ${platform}
+🌐 المتصفح: ${browser}
+📡 IP: ${ip}
+📶 مزود الخدمة: ${isp}
+🕒 التاريخ والوقت: ${now}
+      `;
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => console.log("📩 تم إرسال إشعار الزائر:", data))
+      .catch(err => console.error("❌ خطأ في إرسال إشعار الزائر:", err));
+    })
+    .catch(error => {
+      console.error("❌ لم يتمكن من جلب بيانات IP:", error);
+    });
+});
 
     
 let current = 0;
